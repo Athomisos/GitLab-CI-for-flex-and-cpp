@@ -1,0 +1,26 @@
+#*******************************************************************************************#
+#*----- Description :   CI for project with flex and  c++                               ****#
+#*----- Auteur      :   (c) 2021 Aubertin Emmanuel                                      ****#
+#*----- GitHub      :   Athomisos    | GitLab : aTHO_                                   ****#
+#*----- LinkedIn    :   linkedin.com/in/emmanuel-aubertin                               ****#
+#*******************************************************************************************#
+
+image: gcc # https://hub.docker.com/_/gcc/
+
+build:
+  stage: build
+  script:
+    - apt update && apt -y install make flex
+    - make clean
+    - flex++ -d -otokeniser.cpp tokeniser.l
+    - g++ -c tokeniser.cpp
+    - g++ -ggdb -o compilateur compilateur.cpp tokeniser.o
+  artifacts:
+    paths:
+      - compilateur
+
+test:
+  stage: test
+  script:
+    - ./compilateur <test.p >test.s
+    - gcc  -ggdb -no-pie -fno-pie test.s -o test
